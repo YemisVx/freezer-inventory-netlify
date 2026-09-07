@@ -3,7 +3,7 @@
 // invocations (unlike a plain serverless function's local disk).
 
 const crypto = require("crypto");
-const { getStore } = require("@netlify/blobs");
+const { getStore, connectLambda } = require("@netlify/blobs");
 
 const FREEZER_IDS = ["freezer1", "freezer2"];
 const FUNCTION_PREFIX = "/.netlify/functions/api";
@@ -63,6 +63,7 @@ function json(status, body) {
 // ---------- handler ----------
 
 exports.handler = async (event) => {
+  connectLambda(event);
   const store = getStore("freezer-inventory");
   const method = event.httpMethod;
   let path = event.path.startsWith(FUNCTION_PREFIX)
