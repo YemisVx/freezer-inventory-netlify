@@ -15,6 +15,11 @@ let query = "";
 let addForm = { name: "", category: "other", qty: 1 };
 let showAdd = false;
 let toast = "";
+let loadError = "";
+
+// Show a loading state immediately instead of a blank page while the
+// first fetch is in flight.
+document.getElementById("app").innerHTML = `<div class="empty-state">Loading inventory…</div>`;
 
 function pathToView(path) {
   if (path === "/freezer1") return "freezer1";
@@ -44,8 +49,13 @@ function monthsAgo(dateStr) {
 }
 
 async function loadData() {
-  const res = await fetch("/api/inventory");
-  data = await res.json();
+  try {
+    const res = await fetch("/api/inventory");
+    if (!res.ok) throw new Error(`Server responded ${res.status}`);
+    data = await res.json();
+  } catch (err) {
+    loadError = err.message || "Couldn't load the inventory.";
+  }
   render();
 }
 
@@ -100,6 +110,11 @@ function existingMatch() {
 }
 
 function render() {
+  if (loadError) {
+    app.innerHTML = `<div class="empty-state">Couldn't load the inventory.<br>${loadError}<br><br>
+      <button class="save-btn" style="width:auto;padding:10px 20px" onclick="location.reload()">Try again</button></div>`;
+    return;
+  }
   if (!data) {
     app.innerHTML = `<div class="empty-state">Loading inventory…</div>`;
     return;
