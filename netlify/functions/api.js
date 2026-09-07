@@ -7,6 +7,7 @@ const { getStore, connectLambda } = require("@netlify/blobs");
 
 const FREEZER_IDS = ["freezer1", "freezer2"];
 const FUNCTION_PREFIX = "/.netlify/functions/api";
+const REDIRECT_PREFIX = "/api";
 
 // ---------- storage ----------
 
@@ -66,9 +67,12 @@ exports.handler = async (event) => {
   connectLambda(event);
   const store = getStore("freezer-inventory");
   const method = event.httpMethod;
-  let path = event.path.startsWith(FUNCTION_PREFIX)
-    ? event.path.slice(FUNCTION_PREFIX.length)
-    : event.path;
+  let path = event.path;
+  if (path.startsWith(FUNCTION_PREFIX)) {
+    path = path.slice(FUNCTION_PREFIX.length);
+  } else if (path.startsWith(REDIRECT_PREFIX)) {
+    path = path.slice(REDIRECT_PREFIX.length);
+  }
   if (!path) path = "/";
 
   if (method === "GET" && path === "/inventory") {
