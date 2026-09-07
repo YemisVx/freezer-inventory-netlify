@@ -1,0 +1,8 @@
+{
+  "name": "freezer-inventory",
+  "version": "2.0.0",
+  "description": "Self-hosted-free freezer inventory, deployed on Netlify with Netlify Blobs as storage.",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

@@ -1,0 +1,23 @@
+[build]
+  functions = "netlify/functions"
+  publish = "public"
+
+# Deep links for the QR stickers: /freezer1 and /freezer2 both load the
+# same single-page app (index.html), which reads the path client-side and
+# opens straight to that freezer's view. status = 200 keeps the URL as-is
+# (a rewrite, not a redirect) so the sticker link stays exactly what's on it.
+[[redirects]]
+  from = "/freezer1"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/freezer2"
+  to = "/index.html"
+  status = 200
+
+# Route the frontend's plain /api/* calls to the serverless function.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
